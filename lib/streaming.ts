@@ -52,17 +52,17 @@ export async function streamResponse(
   const decoder = new TextDecoder();
   let buffer = '';
 
-  try {
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
+    let currentEvent = '';
 
-      buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split('\n');
-      // Keep last potentially incomplete line in the buffer
-      buffer = lines.pop() || '';
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
 
-      let currentEvent = '';
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        // Keep last potentially incomplete line in the buffer
+        buffer = lines.pop() || '';
 
       for (const line of lines) {
         if (line.startsWith('event: ')) {
